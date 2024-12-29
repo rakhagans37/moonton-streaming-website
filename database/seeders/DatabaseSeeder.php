@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\RoleTableSeeder;
+use Database\Seeders\RoleTableSeeder; // Ensure this class exists in the specified namespace
 use Database\Seeders\UserTableSeeder;
 
 class DatabaseSeeder extends Seeder

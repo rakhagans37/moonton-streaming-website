@@ -16,13 +16,28 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+Route::redirect('/', '/login');
+
+Route::prefix('prototype')->name('prototype.')->group(function () {
+    Route::get('/signin', function () {
+        return Inertia::render('Prototype/Signin');
+    })->name('signin');
+
+    Route::get('/signup', function () {
+        return Inertia::render('Prototype/Signup');
+    })->name('signup');
+
+    Route::get('/dashboard', function () {
+        return Inertia::render('Prototype/Dashboard');
+    })->name('dashboard');
+
+    Route::get('/subscriptions', function () {
+        return Inertia::render('Prototype/Subscriptions');
+    })->name('subscriptions');
+
+    Route::get('/movie/{slug}', function () {
+        return Inertia::render('Prototype/Movie/Watch');
+    })->name('movie.watch');
 });
 
 Route::get('/dashboard', function () {

@@ -1,11 +1,14 @@
 import './bootstrap';
 import '../css/app.css';
+import '../css/input.css';
+import '../css/button.css';
+import '../css/sidebar.css';
 
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Moonton';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
