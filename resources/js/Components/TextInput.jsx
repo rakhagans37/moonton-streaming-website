@@ -1,6 +1,20 @@
-import { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 
-export default forwardRef(function TextInput({ type = 'text', className = '', isFocused = false, ...props }, ref) {
+const TextInput = forwardRef(function TextInput(
+    {
+        type = "text",
+        autoComplete,
+        className = "",
+        isFocused = false,
+        variant = "primary",
+        placeholder,
+        isError,
+        value,
+        ...props
+    },
+    ref
+) {
     const input = ref ? ref : useRef();
 
     useEffect(() => {
@@ -13,11 +27,25 @@ export default forwardRef(function TextInput({ type = 'text', className = '', is
         <input
             {...props}
             type={type}
-            className={
-                'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm ' +
-                className
-            }
+            className={`rounded-2xl py-[13px] px-7 w-full ${isError && 'input-error'} input-${variant} ${className}`}
             ref={input}
+            placeholder={placeholder}
+            value={value}
+            autoComplete={autoComplete}
         />
     );
 });
+
+TextInput.propTypes = {
+    type: PropTypes.oneOf(["text", "password", "email"]),
+    className: PropTypes.string,
+    isFocused: PropTypes.bool,
+    variant: PropTypes.string,
+    placeholder: PropTypes.string,
+    isError: PropTypes.bool,
+    defaultValue: PropTypes.string,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    autoComplete: PropTypes.string,
+};
+
+export default TextInput;
