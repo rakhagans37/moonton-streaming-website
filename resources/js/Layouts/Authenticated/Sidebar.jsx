@@ -1,3 +1,5 @@
+import { Link } from "@inertiajs/react";
+
 export default function Sidebar({ children }) {
     return (
         <aside className="fixed z-50 w-[300px] h-full">
@@ -82,7 +84,7 @@ export default function Sidebar({ children }) {
                     {/* <!-- Others --> */}
                     <div>
                         <div className="text-gray-1 side-link mb-4">Others</div>
-                        <a href="pricing.html" className="side-link">
+                        <Link href={route("prototype.subscriptions")} className="side-link">
                             <svg
                                 width="24"
                                 height="24"
@@ -97,7 +99,7 @@ export default function Sidebar({ children }) {
                                 />
                             </svg>
                             Payments
-                        </a>
+                        </Link>
                         <a href="#!" className="side-link">
                             <svg
                                 width="24"

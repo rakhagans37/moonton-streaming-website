@@ -30,6 +30,10 @@ Route::prefix('prototype')->name('prototype.')->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Prototype/Dashboard');
     })->name('dashboard');
+
+    Route::get('/subscriptions', function () {
+        return Inertia::render('Prototype/Subscriptions');
+    })->name('subscriptions');
 });
 
 Route::get('/dashboard', function () {
