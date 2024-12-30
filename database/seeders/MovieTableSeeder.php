@@ -18,7 +18,7 @@ class MovieTableSeeder extends Seeder
         $movie->slug = 'the-shawshank-redemption';
         $movie->category = json_encode(['Drama', 'Crime']);
         $movie->video_url = "https://www.youtube.com/watch?v=PLl99DlL6b4";
-        $movie->thumbnail = "/images/feature-2.png";
+        $movie->thumbnail = "/images/featured-2.png";
         $movie->rating = 4.3;
         $movie->is_featured = true;
         $movie->save();
@@ -28,7 +28,7 @@ class MovieTableSeeder extends Seeder
         $movie2->slug = 'the-godfather';
         $movie2->category = json_encode(['Drama', 'Crime']);
         $movie2->video_url = "https://www.youtube.com/watch?v=sY1S34973zA";
-        $movie2->thumbnail = "/images/feature-3.png";
+        $movie2->thumbnail = "/images/featured-3.png";
         $movie2->rating = 4.5;
         $movie2->save();
 
