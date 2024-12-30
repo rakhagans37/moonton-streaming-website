@@ -5,7 +5,7 @@ import { Link, Head, useForm } from "@inertiajs/react";
 import { useEffect } from "react";
 import InputError from "@/Components/InputError";
 
-export default function SignUp() {
+export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -140,7 +140,7 @@ export default function SignUp() {
                                     </span>
                                 </Button>
 
-                                <Link href={route("prototype.signin")}>
+                                <Link href={route("login")}>
                                     <Button type="button" variant="secondary">
                                         <span className="text-base font-semibold">
                                             Sign In To My Account

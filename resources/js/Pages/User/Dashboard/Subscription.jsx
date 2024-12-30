@@ -1,7 +1,8 @@
 import SubscriptionCard from "@/Components/SubscriptionCard";
 import Authenticated from "@/Layouts/Authenticated/Index";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
+import Alert from "@/Components/Alert";
 
 export default function Subscription({ auth, subscriptionsPlan }) {
     const onSelectSubscription = (id) => {
@@ -12,9 +13,16 @@ export default function Subscription({ auth, subscriptionsPlan }) {
         );
     };
 
+    const { props } = usePage();
+    const { flash } = props;
+
     return (
         <Authenticated auth={auth}>
             <Head title="Subscriptions" />
+
+            {/* Alert */}
+            {flash.error && <Alert title={"Info"} message={flash.error} />}
+
             <div className="py-20 flex flex-col items-center">
                 <div className="text-black font-semibold text-[26px] mb-3">
                     Pricing for Everyone

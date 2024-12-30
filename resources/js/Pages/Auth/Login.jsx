@@ -99,7 +99,7 @@ export default function Signin() {
                                     </span>
                                 </Button>
 
-                                <Link href={route("prototype.signup")}>
+                                <Link href={route("register")}>
                                     <Button type="button" variant="secondary">
                                         <span className="text-base font-semibold">
                                             Create New Account
