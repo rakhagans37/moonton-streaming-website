@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import Button from "./Button";
 
 const SubscriptionCard = function ({
-    subscription,
+    isPremium,
     id,
     name,
     price,
@@ -13,7 +13,7 @@ const SubscriptionCard = function ({
     return (
         <>
             {/* Basic */}
-            {subscription === "basic" && (
+            {isPremium === false && (
                 <div className="flex flex-col gap-[30px] py-[30px] px-7 outline outline-1 outline-[#F1F1F1] rounded-[26px] text-black w-[300px] h-[max-content]">
                     {/* Top Content: Name-Price */}
                     <div>
@@ -49,7 +49,7 @@ const SubscriptionCard = function ({
             )}
 
             {/* Premium */}
-            {subscription === "premium" && (
+            {isPremium === true && (
                 <div className="flex flex-col gap-[30px] py-[30px] px-7 outline outline-1 outline-[#F1F1F1] rounded-[26px] text-white w-[300px] bg-black">
                     {/* Ornament Icon */}
                     <div className="bg-alerange rounded-full p-[13px] max-w-max">
@@ -116,7 +116,7 @@ const SubscriptionCard = function ({
 };
 
 SubscriptionCard.propTypes = {
-    subscription: PropTypes.oneOf(["basic", "premium"]).isRequired,
+    subscription: PropTypes.bool,
     features: PropTypes.arrayOf(PropTypes.string),
 };
 
