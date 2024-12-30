@@ -52,7 +52,7 @@ class User extends Authenticatable
     }
 
     // Cek keaktifan subscription user
-    public function getIsActive() : bool
+    public function getIsActive()
     {
         if(!$this->lastActiveSubscription) {
             return false;
