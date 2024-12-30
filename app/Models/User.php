@@ -3,7 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -46,5 +49,23 @@ class User extends Authenticatable
     public function subscriptions()
     {
         return $this->hasMany(UserSubscriptions::class);
+    }
+
+    // Cek keaktifan subscription user
+    public function getIsActive() : bool
+    {
+        if(!$this->lastActiveSubscription) {
+            return false;
+        }
+        $dateNow = Carbon::now();
+        $dateEnd = Carbon::create($this->lastActiveSubscription->expires_at);
+
+        return $dateNow->lessThanOrEqualTo($dateEnd);
+    }
+
+    // Last active user subscription
+    public function lastActiveSubscription() : HasOne
+    {
+        return $this->hasOne(UserSubscriptions::class)->wherePaymentStatus("success")->latest();
     }
 }
