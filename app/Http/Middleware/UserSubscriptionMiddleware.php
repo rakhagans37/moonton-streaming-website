@@ -15,13 +15,13 @@ class UserSubscriptionMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next, $status): Response
-    {   
-        if($status == 'true' && !Auth::user()->getIsActive()) {
-            return redirect()->route('user.dashboard.subscriptions.index');
+    {
+        if ($status == 'true' && !Auth::user()->getIsActive()) {
+            return redirect()->route('user.dashboard.subscriptions.index')->with('error', 'You need to subscribe to watch the movie');
         }
 
-        if($status == 'false' && Auth::user()->getIsActive()) {
-            return redirect()->route('user.dashboard.index');
+        if ($status == 'false' && Auth::user()->getIsActive()) {
+            return redirect()->route('user.dashboard.index')->with('error', 'You still have an active subscription');
         }
 
         return $next($request);

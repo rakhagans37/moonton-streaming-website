@@ -1,7 +1,8 @@
+import Alert from "@/Components/Alert";
 import BrowseMovie from "@/Components/BrowseMovie";
 import FeaturedMovie from "@/Components/FeaturedMovie";
 import Authenticated from "@/Layouts/Authenticated/Index";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import Flickity from "react-flickity-component";
 
 export default function Dashboard({ auth, movies, featuredMovies }) {
@@ -15,6 +16,8 @@ export default function Dashboard({ auth, movies, featuredMovies }) {
         draggable: ">1",
         initialIndex: 0,
     };
+    const { props } = usePage();
+    const { flash } = props;
 
     return (
         <>
@@ -25,6 +28,12 @@ export default function Dashboard({ auth, movies, featuredMovies }) {
                 />
             </Head>
             <Authenticated auth={auth}>
+                {/* Alert */}
+                {flash.error && (
+                    <Alert title={"Info"} message={flash.error} />
+                )}
+                
+
                 {/* Featured Movie */}
                 <div>
                     <div className="font-semibold text-[22px] text-black mb-4">
