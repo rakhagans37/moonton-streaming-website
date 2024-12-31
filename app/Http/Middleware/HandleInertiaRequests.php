@@ -62,6 +62,9 @@ class HandleInertiaRequests extends Middleware
                 'message' => $request->session()->get('message'),
                 'type' => $request->session()->get('type'),
             ],
+            'env' => [
+                'MIDTRANS_CLIENT_KEY' => env('MIDTRANS_CLIENT_KEY'),
+            ]
         ];
     }
 }
