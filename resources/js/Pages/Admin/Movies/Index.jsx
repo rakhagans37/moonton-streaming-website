@@ -10,7 +10,7 @@ import Table from "@/Components/Table";
 export default function Index({ auth, flashMessage, movies }) {
     const [showModal, setShowModal] = useState(false);
     const [movieId, setMovieId] = useState(null);
-    const { delete: destroy } = useForm();
+    const { delete: destroy, put } = useForm();
 
     const closeModal = () => setShowModal(false);
 
@@ -189,18 +189,30 @@ export default function Index({ auth, flashMessage, movies }) {
                                             Edit
                                         </Button>
                                     </Link>
-
-                                    <Button
-                                        type="button"
-                                        variant="danger"
-                                        className="p-2 w-24 text-white"
-                                        onClick={() => {
-                                            setShowModal(true);
-                                            setMovieId(movie.id);
-                                        }}
-                                    >
-                                        Delete
-                                    </Button>
+                                    {movie.deleted_at ? (
+                                        <Button
+                                            type="button"
+                                            variant="good"
+                                            className="p-2 w-24 text-white"
+                                            onClick={() => {
+                                                put(route("admin.dashboard.movie.restore", movie.id));
+                                            }}
+                                        >
+                                            Restore
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            type="button"
+                                            variant="danger"
+                                            className="p-2 w-24 text-white"
+                                            onClick={() => {
+                                                setShowModal(true);
+                                                setMovieId(movie.id);
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>
+                                    )}
                                 </div>
                             </td>
                         </tr>

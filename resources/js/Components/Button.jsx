@@ -19,7 +19,7 @@ const Button = function Button({ type, className = '', variant='primary', disabl
 
 Button.propTypes = {
     className: PropTypes.string,
-    variant: PropTypes.oneOf(['primary', 'warning', 'danger', 'secondary', 'white-outline']),
+    variant: PropTypes.oneOf(['primary', 'warning', 'danger', 'secondary', 'white-outline', 'good']),
     disabled: PropTypes.bool,
     children: PropTypes.node,
     type: PropTypes.oneOf(['button', 'submit', 'reset']),
