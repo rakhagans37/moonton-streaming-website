@@ -6,6 +6,6 @@
     @apply text-green-800 bg-green-50
 }
 
-.alert-warning{
+.alert-danger{
     @apply text-red-800 bg-red-50
 }

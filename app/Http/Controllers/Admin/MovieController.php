@@ -80,33 +80,46 @@ class MovieController extends Controller
      */
     public function update(UpdateRequest $request, Movies $movie)
     {
-        $data = $request->validated();
-        if($request->hasFile('thumbnail')) {
-            Storage::disk('public')->delete($movie->thumbnail);
-            $data['thumbnail'] = Storage::disk('public')->put('movies', $request->file('thumbnail'));
-            $movie->thumbnail = $data['thumbnail'];
-        } else {
-            $data['thumbnail'] = $movie->thumbnail;
+        try {
+            $data = $request->validated();
+            
+            if($request->hasFile('thumbnail')) {
+                Storage::disk('public')->delete($movie->thumbnail);
+                $data['thumbnail'] = Storage::disk('public')->put('movies', $request->file('thumbnail'));
+                $movie->thumbnail = $data['thumbnail'];
+            } else {
+                $data['thumbnail'] = $movie->thumbnail;
+            }
+            $movie->title = $data['title'];
+            $movie->slug = Str::slug($data['title']);
+            $movie->category = json_encode($data['category']);
+            $movie->is_featured = $data['is_featured'];
+            $movie->video_url = $data['video_url'];
+            $movie->rating = $data['rating'];
+            $movie->save();
+    
+            return redirect()->route('admin.dashboard.movie.index')->with([
+                'message' => 'Movie updated successfully.',
+                'type' => 'success',
+            ]);
+        } catch (\Throwable $th) {
+            return redirect()->route('admin.dashboard.movie.index')->with([
+                'message' => 'Movie updated failed.',
+                'type' => 'failed',
+            ]);
         }
-        $movie->title = $data['title'];
-        $movie->slug = Str::slug($data['title']);
-        $movie->category = json_encode($data['category']);
-        $movie->is_featured = $data['is_featured'];
-        $movie->video_url = $data['video_url'];
-        $movie->rating = $data['rating'];
-        $movie->save();
-
-        return redirect()->route('admin.dashboard.movie.index')->with([
-            'message' => 'Movie updated successfully.',
-            'type' => 'success',
-        ]);
+       
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Movies $movies)
+    public function destroy(Movies $movie)
     {
-        //
+        $movie->delete();
+        return redirect()->route('admin.dashboard.movie.index')->with([
+            'message' => 'Movie deleted successfully.',
+            'type' => 'success',
+        ]);
     }
 }
