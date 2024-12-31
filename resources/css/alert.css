@@ -1,0 +1,11 @@
+.alert-info{
+    @apply text-alerange bg-blue-50;
+}
+
+.alert-success{
+    @apply text-green-800 bg-green-50
+}
+
+.alert-warning{
+    @apply text-red-800 bg-red-50
+}

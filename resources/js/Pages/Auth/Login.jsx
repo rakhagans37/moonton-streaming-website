@@ -100,7 +100,11 @@ export default function Signin() {
                                 </Button>
 
                                 <Link href={route("register")}>
-                                    <Button type="button" variant="secondary">
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        processing={processing}
+                                    >
                                         <span className="text-base font-semibold">
                                             Create New Account
                                         </span>
