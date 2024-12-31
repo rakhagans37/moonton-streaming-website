@@ -7,6 +7,8 @@ use App\Models\Movies;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Requests\Admin\Movie\Store;
+use App\Http\Requests\Admin\Movie\UpdateRequest;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class MovieController extends Controller
@@ -16,7 +18,9 @@ class MovieController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Admin/Movies/Index');
+        return Inertia::render('Admin/Movies/Index', [
+            'movies' => Movies::all()
+        ]);
     }
 
     /**
@@ -34,7 +38,7 @@ class MovieController extends Controller
     {
         $data = $request->validated();
         $request->file('thumbnail')->store('movies');
-        $data['thumbnail'] = $request->file('thumbnail')->hashName();
+        $data['thumbnail'] = Storage::disk('public')->put('movies', $request->file('thumbnail'));
         $slug= Str::slug($data['title']);
 
         $movie = new Movies();
@@ -64,17 +68,38 @@ class MovieController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Movies $movies)
+    public function edit(Movies $movie)
     {
-        //
+        return Inertia::render('Admin/Movies/Edit', [
+            'movie' => $movie
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Movies $movies)
+    public function update(UpdateRequest $request, Movies $movie)
     {
-        //
+        $data = $request->validated();
+        if($request->hasFile('thumbnail')) {
+            Storage::disk('public')->delete($movie->thumbnail);
+            $data['thumbnail'] = Storage::disk('public')->put('movies', $request->file('thumbnail'));
+            $movie->thumbnail = $data['thumbnail'];
+        } else {
+            $data['thumbnail'] = $movie->thumbnail;
+        }
+        $movie->title = $data['title'];
+        $movie->slug = Str::slug($data['title']);
+        $movie->category = json_encode($data['category']);
+        $movie->is_featured = $data['is_featured'];
+        $movie->video_url = $data['video_url'];
+        $movie->rating = $data['rating'];
+        $movie->save();
+
+        return redirect()->route('admin.dashboard.movie.index')->with([
+            'message' => 'Movie updated successfully.',
+            'type' => 'success',
+        ]);
     }
 
     /**

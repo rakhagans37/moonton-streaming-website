@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Movie;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class Store extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,13 +23,13 @@ class Store extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255', 'unique:movies,title'],
-            'category' => ['required', 'array', 'min:1', 'max:3'],
-            'category.*' => ['required', 'string', 'max:255'],
-            'video_url' => ['required', 'string', 'max:255'],
-            'rating' => ['required', 'numeric', 'min:0', 'max:5'],
-            'is_featured' => ['nullable','boolean'],
-            'thumbnail' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'title' => ['nullable', 'unique:movies,title,' . $this->movie->id],
+            'category' => ['nullable', 'array', 'min:1', 'max:3'],
+            'category.*' => ['nullable', 'string', 'max:255'],
+            'video_url' => ['nullable', 'string', 'max:255'],
+            'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
+            'is_featured' => ['nullable', 'boolean'],
+            'thumbnail' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];
     }
 }
