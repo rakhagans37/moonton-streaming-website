@@ -1,7 +1,7 @@
-export default function Alert({ title, message}) {
+export default function Alert({ title, message, type="info" }) {
     return (
         <div
-            className="flex items-center p-4 mb-4 text-sm text-alerange rounded-lg bg-blue-50"
+            className={`flex items-center p-4 mb-4 text-sm rounded-lg alert-${type}`}
         >
             <svg
                 className="flex-shrink-0 inline w-4 h-4 me-3"

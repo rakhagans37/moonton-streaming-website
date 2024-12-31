@@ -7,7 +7,6 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\RoleTableSeeder; // Ensure this class exists in the specified namespace
 use Database\Seeders\UserTableSeeder;
 use Database\Seeders\SubscriptionsPlanSeeder;
-use Database\Seeders\MovieTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,6 +25,5 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleTableSeeder::class);
         $this->call(UserTableSeeder::class);
         $this->call(SubscriptionsPlanSeeder::class);
-        $this->call(MovieTableSeeder::class);
     }
 }

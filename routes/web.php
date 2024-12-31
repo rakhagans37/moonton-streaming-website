@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\SubscriptionController;
 use App\Http\Controllers\User\DashboardController;
@@ -21,37 +22,16 @@ use Inertia\Inertia;
 
 Route::redirect('/', '/login');
 
-Route::prefix('prototype')->name('prototype.')->group(function () {
-    Route::get('/signin', function () {
-        return Inertia::render('Prototype/Signin');
-    })->name('signin');
-
-    Route::get('/signup', function () {
-        return Inertia::render('Prototype/Signup');
-    })->name('signup');
-
-    Route::get('/dashboard', function () {
-        return Inertia::render('Prototype/Dashboard');
-    })->name('dashboard');
-
-    Route::get('/subscriptions', function () {
-        return Inertia::render('Prototype/Subscriptions');
-    })->name('subscriptions');
-
-    Route::get('/movie/{slug}', function () {
-        return Inertia::render('Prototype/Movie/Watch');
-    })->name('movie.watch');
-});
-
-Route::get('/dashboard', function () {
-    return Inertia::render('User/Dashboard/Index');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth', 'role:user')->prefix('dashboard')->name('user.dashboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::get('/movie/{movie:slug}', [MovieController::class, 'watch'])->name('movie.watch')->middleware('checkUserSubscription:true');
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->middleware('checkUserSubscription:false')->name('subscriptions.index');
     Route::post('/subcscriptions/{subscriptionPlan}/user-subscribe/', [SubscriptionController::class, 'subscribe'])->name('subscriptions.userSubscribe');
+});
+
+Route::middleware('auth', 'role:admin')->prefix('admin')->name('admin.dashboard.')->group(function () {
+    Route::put('/movie/{movieId}/restore', [AdminMovieController::class, 'restore'])->name('movie.restore');
+    Route::resource('movie', AdminMovieController::class);
 });
 
 Route::middleware('auth')->group(function () {
