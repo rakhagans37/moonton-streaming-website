@@ -5,7 +5,7 @@ const BrowseMovie = function BrowseMovie({ slug, title, category, thumbnail }) {
     return (
         <div className="absolute group overflow-hidden mr-[30px]">
             <img
-                src={thumbnail}
+                src={"/storage/" + thumbnail}
                 className="object-cover rounded-[30px] h-[340px] w-[250px]"
                 alt=""
             />
@@ -25,7 +25,10 @@ const BrowseMovie = function BrowseMovie({ slug, title, category, thumbnail }) {
             >
                 <img src="/icons/ic_play.svg" className="" width="50" alt="" />
             </div>
-            <Link href={route('user.dashboard.movie.watch', slug)} className="inset-0 absolute z-50"></Link>
+            <Link
+                href={route("user.dashboard.movie.watch", slug)}
+                className="inset-0 absolute z-50"
+            ></Link>
         </div>
     );
 };

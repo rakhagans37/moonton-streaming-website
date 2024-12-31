@@ -28,16 +28,16 @@ class HandleInertiaRequests extends Middleware
     {
         $activeSubscription = Auth::user() ? Auth::user()->lastActiveSubscription : null;
 
-        if(!$activeSubscription) {
+        if (!$activeSubscription) {
             return null;
-        } else if(Carbon::parse($activeSubscription->expires_at)->isPast()) {
+        } else if (Carbon::parse($activeSubscription->expires_at)->isPast()) {
             return null;
         }
 
         $remainingDays = Carbon::parse($activeSubscription->expires_at)->diffInDays(Carbon::now());
         $lastDays = Carbon::parse($activeSubscription->updated_at)->addMonth($activeSubscription->subscriptionPlan->active_period_in_months);
         $activeDays = Carbon::parse($activeSubscription->updated_at)->diffInDays($lastDays);
-        
+
         return [
             'name' => $activeSubscription->subscriptionPlan->name,
             'remainingDays' => $remainingDays,
@@ -57,6 +57,10 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'activeSubscription' => $this->activeSubscription(),
+            ],
+            'flashMessage' => [
+                'message' => $request->session()->get('message'),
+                'type' => $request->session()->get('type'),
             ],
         ];
     }
