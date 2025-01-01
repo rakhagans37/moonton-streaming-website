@@ -31,6 +31,7 @@ Route::middleware('auth', 'role:user')->prefix('dashboard')->name('user.dashboar
     Route::get('/movie/{movie:slug}', [MovieController::class, 'watch'])->name('movie.watch')->middleware('checkUserSubscription:true');
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->middleware('checkUserSubscription:false')->name('subscriptions.index');
     Route::get('/subscriptions/redeem', [SubscriptionController::class, 'redeem'])->middleware('checkUserSubscription:false')->name('subscriptions.redeem');
+    Route::get('/subscriptions/{subscriptionPlan}/transaction', [SubscriptionController::class, 'transaction'])->middleware('checkUserSubscription:false')->name('subscriptions.transaction');
     Route::post('/subcscriptions/{subscriptionPlan}/user-subscribe/', [SubscriptionController::class, 'subscribe'])->name('subscriptions.userSubscribe');
     Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction.index');
 });
