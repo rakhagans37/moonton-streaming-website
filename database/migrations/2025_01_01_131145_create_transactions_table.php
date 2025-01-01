@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_subscriptions_id')->constrained()->onDelete('cascade');
+            $table->foreignId('voucher_id')->nullable()->constrained()->onDelete('set null');
             $table->unsignedInteger('price');
             $table->unsignedInteger('discount')->default(0);
             $table->unsignedInteger('final_price');
