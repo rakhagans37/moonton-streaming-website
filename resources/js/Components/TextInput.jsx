@@ -40,7 +40,7 @@ TextInput.propTypes = {
     type: PropTypes.oneOf(["text", "password", "email", "number", "file"]),
     className: PropTypes.string,
     isFocused: PropTypes.bool,
-    variant: PropTypes.string,
+    variant: PropTypes.oneOf(["primary", "error", "primary-outline"]),
     placeholder: PropTypes.string,
     isError: PropTypes.bool,
     defaultValue: PropTypes.string,

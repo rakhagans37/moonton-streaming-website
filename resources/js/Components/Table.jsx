@@ -1,4 +1,6 @@
-export default function Table({ children, dataLength = 0 }) {
+import PropTypes from "prop-types";
+
+const Table = function Table({ column, children, dataLength = 0 }) {
     return (
         <>
             {/* <!-- Start block --> */}
@@ -9,7 +11,7 @@ export default function Table({ children, dataLength = 0 }) {
                             <div className="flex-1 flex items-center space-x-2">
                                 <h5>
                                     <span className="text-gray-500">
-                                        All Movies:
+                                        All Data:
                                     </span>
                                     <span> {dataLength}</span>
                                 </h5>
@@ -19,38 +21,14 @@ export default function Table({ children, dataLength = 0 }) {
                             <table className="w-full text-sm text-left text-gray-500">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                                     <tr>
-                                        <th scope="col" className="p-4">
-                                            Thumbnail
-                                        </th>
-                                        <th scope="col" className="p-4">
-                                            Tittle
-                                        </th>
-                                        <th scope="col" className="p-4">
-                                            Slug
-                                        </th>
-                                        <th scope="col" className="p-4">
-                                            Category
-                                        </th>
-                                        <th scope="col" className="p-4">
-                                            Video URL
-                                        </th>
-                                        <th scope="col" className="p-4">
-                                            Rating
-                                        </th>
-                                        <th scope="col" className="p-4">
-                                            Featured
-                                        </th>
-                                        <th scope="col" className="p-4">
-                                            Created At
-                                        </th>
-                                        <th scope="col" className="p-4">
-                                            Last Update
-                                        </th>
+                                        {column.map((columnName, index) => (
+                                            <th scope="col" key={index} className="p-4">
+                                                {columnName}
+                                            </th>
+                                        ))}
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {children}
-                                </tbody>
+                                <tbody>{children}</tbody>
                             </table>
                         </div>
                     </div>
@@ -59,3 +37,11 @@ export default function Table({ children, dataLength = 0 }) {
         </>
     );
 }
+
+Table.propTypes = {
+    column: PropTypes.arrayOf(PropTypes.string).isRequired,
+    children: PropTypes.node.isRequired,
+    dataLength: PropTypes.number
+};
+
+export default Table;
