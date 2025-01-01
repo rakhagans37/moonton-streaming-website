@@ -1,10 +1,8 @@
 import MenuItem from "@/Components/MenuItem";
 import SubscriptionDetail from "@/Components/SubscriptionDetail";
-import { Link } from "@inertiajs/react";
 import { UserMenu, OtherUserMenu, AdminMenu, OtherAdminMenu } from "../SidebarItem";
 
 export default function Sidebar({ children, auth }) {
-    console.log(auth);
     return (
         <aside className="fixed z-50 w-[300px] h-full">
             <div className="flex flex-col p-[30px] pr-0 border-r border-gray-[#F1F1F1] overflow-y-auto h-full">

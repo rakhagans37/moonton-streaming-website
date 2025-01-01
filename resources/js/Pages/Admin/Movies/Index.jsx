@@ -120,7 +120,20 @@ export default function Index({ auth, flashMessage, movies }) {
 
                 <hr className="mb-4" />
 
-                <Table dataLength={movies.length}>
+                <Table
+                    column={[
+                        "Thumbnail",
+                        "Title",
+                        "Slug",
+                        "Category",
+                        "Video URL",
+                        "Rating",
+                        "Featured",
+                        "Created At",
+                        "Last Update",
+                    ]}
+                    dataLength={movies.length}
+                >
                     {movies.map((movie) => (
                         <tr
                             className="border-b hover:bg-gray-100"
@@ -195,7 +208,12 @@ export default function Index({ auth, flashMessage, movies }) {
                                             variant="good"
                                             className="p-2 w-24 text-white"
                                             onClick={() => {
-                                                put(route("admin.dashboard.movie.restore", movie.id));
+                                                put(
+                                                    route(
+                                                        "admin.dashboard.movie.restore",
+                                                        movie.id
+                                                    )
+                                                );
                                             }}
                                         >
                                             Restore

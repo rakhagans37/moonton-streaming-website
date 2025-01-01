@@ -34,6 +34,16 @@ class SubscriptionController extends Controller
         ]);
     }
 
+    public function redeem()
+    {
+        return Inertia::render('User/Dashboard/SubscriptionRedeem');
+    }
+
+    public function transaction(SubscriptionsPlan $subscriptionPlan)
+    {
+        return Inertia::render('User/Dashboard/Subscription/Transaction');
+    }
+
     public function subscribe(Request $request, SubscriptionsPlan $subscriptionPlan)
     {
         $userSubscription = new UserSubscriptions();
