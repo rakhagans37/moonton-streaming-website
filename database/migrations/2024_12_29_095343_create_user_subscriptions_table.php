@@ -15,10 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('subscriptions_plans_id')->constrained();
-            $table->unsignedInteger('price');
             $table->dateTime('expires_at')->nullable();
-            $table->string('payment_status', 10)->default('pending');
-            $table->string('snap_token')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
