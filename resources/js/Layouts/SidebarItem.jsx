@@ -120,7 +120,7 @@ const OtherUserMenu = [
         text: "Redeem Voucher",
     },
     {
-        link: null,
+        link: 'user.dashboard.transaction.index',
         icon: (
             <svg
                 width="24"
@@ -137,7 +137,7 @@ const OtherUserMenu = [
                 />
             </svg>
         ),
-        text: "Analytics",
+        text: "Transaction",
     },
     {
         link: "logout",
