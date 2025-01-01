@@ -22,18 +22,22 @@ use Inertia\Inertia;
 |
 */
 // Midtrans Route
-Route::post('/midtrans/notification', [SubscriptionController::class, 'midtransCallback'])->name('midtrans.notification');
+Route::post('/midtrans/notification', [TransactionController::class, 'midtransCallback'])->name('midtrans.notification');
 
 Route::redirect('/', '/login');
 
 Route::middleware('auth', 'role:user')->prefix('dashboard')->name('user.dashboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::get('/movie/{movie:slug}', [MovieController::class, 'watch'])->name('movie.watch')->middleware('checkUserSubscription:true');
+
+    // Subscription
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->middleware('checkUserSubscription:false')->name('subscriptions.index');
     Route::get('/subscriptions/redeem', [SubscriptionController::class, 'redeem'])->middleware('checkUserSubscription:false')->name('subscriptions.redeem');
-    Route::get('/subscriptions/{subscriptionPlan}/transaction', [SubscriptionController::class, 'transaction'])->middleware('checkUserSubscription:false')->name('subscriptions.transaction');
     Route::post('/subcscriptions/{subscriptionPlan}/user-subscribe/', [SubscriptionController::class, 'subscribe'])->name('subscriptions.userSubscribe');
+   
+    // Transaction
     Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction.index');
+    Route::post('/subscriptions/{transaction}/transaction/', [TransactionController::class, 'pay'])->middleware('checkUserSubscription:false')->name('subscriptions.pay');
 });
 
 Route::middleware('auth', 'role:admin')->prefix('admin')->name('admin.dashboard.')->group(function () {
@@ -50,4 +54,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

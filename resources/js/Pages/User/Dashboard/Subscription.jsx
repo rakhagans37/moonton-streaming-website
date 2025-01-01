@@ -2,55 +2,22 @@ import SubscriptionCard from "@/Components/SubscriptionCard";
 import Authenticated from "@/Layouts/Authenticated/Index";
 import { Head, router, usePage } from "@inertiajs/react";
 import Alert from "@/Components/Alert";
-import { Inertia } from "@inertiajs/inertia";
 
-export default function Subscription({ auth, subscriptionsPlan, env }) {
+export default function Subscription({ auth, subscriptionsPlan }) {
     const onSelectSubscription = (id) => {
         router.post(
             route("user.dashboard.subscriptions.userSubscribe", {
                 subscriptionPlan: id,
             }),
-            {},
-            {
-                only: ["userSubscription"],
-                onSuccess: ({ props }) => {
-                    onSnapMidtrans(props.userSubscription);
-                },
-            }
         );
     };
 
-    const onSnapMidtrans = (userSubscription) => {
-        snap.pay(userSubscription.snap_token, {
-            // Optional
-            onSuccess: function (result) {
-                Inertia.visit(route("user.dashboard.index"))
-            },
-            // Optional
-            onPending: function (result) {
-                Inertia.visit(route("user.dashboard.index"));
-            },
-            // Optional
-            onError: function (result) {
-                Inertia.visit(route("user.dashboard.index"));
-            },
-            // Optional
-            onClose: function () {
-                Inertia.visit(route("user.dashboard.index"));
-            },
-        });
-    };
     const { props } = usePage();
     const { flash } = props;
 
     return (
         <Authenticated auth={auth}>
-            <Head title="Subscriptions">
-                <script
-                    src="https://app.sandbox.midtrans.com/snap/snap.js"
-                    data-client-key={env.MIDTRANS_CLIENT_KEY}
-                ></script>
-            </Head>
+            <Head title="Subscriptions"></Head>
 
             {/* Alert */}
             {flash.error && <Alert title={"Info"} message={flash.error} />}
