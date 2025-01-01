@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -67,5 +68,11 @@ class User extends Authenticatable
     public function lastActiveSubscription() : HasOne
     {
         return $this->hasOne(UserSubscriptions::class)->latest();
+    }
+
+    // Get transaction user
+    public function transactions() : HasManyThrough
+    {
+        return $this->hasManyThrough(Transaction::class, UserSubscriptions::class);
     }
 }

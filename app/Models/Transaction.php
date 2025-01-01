@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Transaction extends Model
 {
@@ -21,5 +22,11 @@ class Transaction extends Model
     public function userSubscription()
     {
         return $this->belongsTo(UserSubscriptions::class, 'user_subscriptions_id', 'id');
+    }
+
+    // Get transaction by user
+    public function user() : HasOneThrough
+    {
+        return $this->hasOneThrough(User::class, UserSubscriptions::class, 'id', 'id', 'user_subscriptions_id', 'user_id');
     }
 }

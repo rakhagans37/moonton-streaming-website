@@ -29,7 +29,7 @@ class TransactionController extends Controller
 
     public function index()
     {
-        $transcations = UserSubscriptions::where('user_id', Auth::user()->id)->get();
+        $transcations = Auth::user()->transactions;
         return Inertia::render('User/Dashboard/Transaction', [
             'transactions' => $transcations
         ]);
