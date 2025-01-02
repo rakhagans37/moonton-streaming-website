@@ -20,7 +20,7 @@ class UserTransactionMiddleware
         $transaction = $request->route('transaction'); // Ambil transaksi dari parameter route
 
         // Pastikan transaksi adalah milik user yang sedang login
-        if ($transaction->userSubscription->user_id !== $request->user()->id) {
+        if ($transaction->userSubscription->user_id !== $request->user()->id || $transaction->payment_status !== 'pending') {
             return redirect()->route('user.dashboard.index')->with('error', 'Transaction not found');
         }
 

@@ -32,7 +32,7 @@ class TransactionController extends Controller
             'transactions' => $transcations
         ]);
     }
-    
+
     public function payPage(Transaction $transaction)
     {
         return Inertia::render('User/Dashboard/Subscription/Transaction', [
@@ -51,6 +51,7 @@ class TransactionController extends Controller
             )
         );
         $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $transaction->midtrans_order_id = $params['transaction_details']['order_id'];
         $transaction->snap_token = $snapToken;
         $transaction->save();
 
@@ -58,6 +59,15 @@ class TransactionController extends Controller
         return Inertia::render('User/Dashboard/Subscription/Transaction', [
             'transaction' => $transaction,
             'userSubscription' => $transaction->userSubscription
+        ]);
+    }
+
+    public function cancel(Transaction $transaction)
+    {
+        \Midtrans\Transaction::cancel($transaction->midtrans_order_id);
+        return redirect()->route('user.dashboard.transaction.index')->with([
+            'message' => 'Transaction canceled',
+            'type' => 'Info'
         ]);
     }
 
@@ -78,8 +88,6 @@ class TransactionController extends Controller
             // TODO Set payment status in merchant's database to 'success'
             $transaction->payment_status = 'success';
             $userSubscription->expires_at = Carbon::now()->addMonth($userSubscription->subscriptionPlan->active_period_in_months);
-            $userSubscription->save();
-            $transaction->save();
         } else if (
             $transactionStatus == 'settlement' && $fraud == 'challenge'
         ) {
@@ -96,6 +104,10 @@ class TransactionController extends Controller
             $transaction->payment_status = 'failure';
         }
 
+        $userSubscription->save();
+        $transaction->save();
+
+        return "OK";
         return response()->json(['status' => 'success', 'message' => 'Payment status updated']);
     }
 }

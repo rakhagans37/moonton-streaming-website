@@ -18,7 +18,9 @@ class Transaction extends Model
         'final_price',
         'snap_token',
         'payment_status',
-        'voucher_id'
+        'voucher_id',
+        'midtrans_order_id',
+        'expired_at'
     ];
 
     public function userSubscription()

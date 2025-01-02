@@ -20,6 +20,8 @@ return new class extends Migration
             $table->unsignedInteger('final_price');
             $table->string('payment_status', 10)->default('pending');
             $table->string('snap_token')->nullable();
+            $table->string('midtrans_order_id')->nullable();
+            $table->dateTime('expired_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
