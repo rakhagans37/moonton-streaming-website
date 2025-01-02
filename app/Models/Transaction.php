@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Transaction extends Model
@@ -17,6 +18,9 @@ class Transaction extends Model
         'final_price',
         'snap_token',
         'payment_status',
+        'voucher_id',
+        'midtrans_order_id',
+        'expired_at'
     ];
 
     public function userSubscription()
@@ -28,5 +32,10 @@ class Transaction extends Model
     public function user() : HasOneThrough
     {
         return $this->hasOneThrough(User::class, UserSubscriptions::class, 'id', 'id', 'user_subscriptions_id', 'user_id');
+    }
+
+    public function voucher() : BelongsTo
+    {
+        return $this->belongsTo(Voucher::class, 'voucher_id', 'id');
     }
 }

@@ -21,4 +21,14 @@ class SubscriptionsPlan extends Model
     {
         return $this->hasMany(UserSubscriptions::class, 'subscriptions_plans_id', 'id');
     }
+
+    public function vouchers()
+    {
+        return $this->hasMany(Voucher::class, 'subscriptions_plans_id', 'id');
+    }
+
+    public function userSubscriptions()
+    {
+        return $this->hasMany(UserSubscriptions::class, 'subscriptions_plans_id', 'id');
+    }
 }

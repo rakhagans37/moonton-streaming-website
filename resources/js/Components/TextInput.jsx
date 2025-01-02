@@ -37,7 +37,7 @@ const TextInput = forwardRef(function TextInput(
 });
 
 TextInput.propTypes = {
-    type: PropTypes.oneOf(["text", "password", "email", "number", "file"]),
+    type: PropTypes.oneOf(["text", "password", "email", "number", "file", "date"]),
     className: PropTypes.string,
     isFocused: PropTypes.bool,
     variant: PropTypes.oneOf(["primary", "error", "primary-outline"]),
