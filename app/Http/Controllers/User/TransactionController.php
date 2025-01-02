@@ -5,9 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\SubscriptionsPlan;
 use App\Models\Transaction;
-use App\Models\UserSubscriptions;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -34,26 +32,12 @@ class TransactionController extends Controller
             'transactions' => $transcations
         ]);
     }
-
-    public function subscribe(Request $request, SubscriptionsPlan $subscriptionPlan)
+    
+    public function payPage(Transaction $transaction)
     {
-        $userSubscription = new UserSubscriptions();
-        $userSubscription->user_id = $request->user()->id;
-        $userSubscription->subscriptions_plans_id = $subscriptionPlan->id;
-        $userSubscription->save();
-
-        $transaction = new Transaction();
-        $transaction->user_subscriptions_id = $userSubscription->id;
-        $transaction->price = $subscriptionPlan->price;
-        $transaction->final_price = $subscriptionPlan->price;
-        $transaction->discount = 0;
-        // $transaction->expires_at = Carbon::now()->addMonth($subscriptionPlan->active_period_in_months);
-        $transaction->payment_status = 'pending';
-        $transaction->save();
-
         return Inertia::render('User/Dashboard/Subscription/Transaction', [
             'transaction' => $transaction,
-            'subscriptionPlan' => SubscriptionsPlan::find($userSubscription->subscriptions_plans_id)
+            'subscriptionPlan' => SubscriptionsPlan::find($transaction->userSubscription->subscriptions_plans_id)
         ]);
     }
 

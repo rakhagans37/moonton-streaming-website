@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\SubscriptionsPlan;
 use App\Models\Transaction;
 use App\Models\UserSubscriptions;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 class SubscriptionController extends Controller
 {
@@ -44,10 +42,7 @@ class SubscriptionController extends Controller
         $transaction->payment_status = 'pending';
         $transaction->save();
 
-        return Inertia::render('User/Dashboard/Subscription/Transaction', [
-            'transaction' => $transaction,
-            'subscriptionPlan' => SubscriptionsPlan::find($userSubscription->subscriptions_plans_id)
-        ]);
+        return redirect()->route('user.dashboard.subscriptions.payPage', $transaction);
     }
 
     

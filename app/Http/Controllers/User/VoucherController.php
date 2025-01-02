@@ -9,6 +9,7 @@ use App\Models\UserSubscriptions;
 use App\Models\Voucher;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class VoucherController extends Controller
 {
@@ -31,11 +32,6 @@ class VoucherController extends Controller
                 'type' => 'failed',
                 'message' => 'Voucher has been expired'
             ];
-        } else if ($voucher->type !== 'redeem') {
-            return [
-                'type' => 'failed',
-                'message' => 'Voucher is not redeemable'
-            ];
         }
 
         return null;
@@ -50,6 +46,13 @@ class VoucherController extends Controller
         $validationError = $this->validateVoucher($voucher);
         if ($validationError) {
             return redirect()->back()->with($validationError);
+        }
+
+        if ($voucher->type !== 'redeem') {
+            return redirect()->back()->with([
+                'type' => 'failed',
+                'message' => 'Voucher is not redeemable'
+            ]);
         }
 
         $voucher->used += 1;
@@ -73,6 +76,47 @@ class VoucherController extends Controller
         return redirect()->route('user.dashboard.index')->with([
             'type' => 'success',
             'message' => 'Voucher redeemed successfully'
+        ]);
+    }
+
+    public function apply(RedeemRequest $request, Transaction $transaction)
+    {
+        $data = $request->validated();
+
+        $voucher = Voucher::where('code', $data['voucher'])->first();
+
+        $validationError = $this->validateVoucher($voucher);
+        if ($validationError) {
+            return redirect()->back()->with($validationError);
+        }
+
+        if ($voucher->type !== 'amount' && $voucher->type !== 'percent') {
+            return redirect()->back()->with([
+                'type' => 'failed',
+                'message' => 'Voucher is not applicable'
+            ]);
+        }
+
+        $voucher->used += 1;
+        $voucher->save();
+
+        $discount = 0;
+        if ($voucher->type == 'amount') {
+            $discount = $voucher->value;
+        } else if ($voucher->type == 'percent') {
+            $discount = $transaction->price * $voucher->value / 100;
+        }
+
+        $transaction->discount = $discount;
+        $transaction->final_price = $transaction->price - $discount;
+        $transaction->voucher_id = $voucher->id;
+        $transaction->save();
+
+
+        return redirect()->back()->with([
+            'type' => 'success',
+            'message' => 'Voucher applied successfully',
+            'transaction' => $transaction->id,
         ]);
     }
 }

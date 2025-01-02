@@ -4,8 +4,9 @@ import TextInput from "@/Components/TextInput";
 import Heading from "@/Components/Typography/Heading";
 import Subheading from "@/Components/Typography/Subheading";
 import Authenticated from "@/Layouts/Authenticated/Index";
-import { Head, router } from "@inertiajs/react";
+import { Head, router, useForm } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
+import InputError from "@/Components/InputError";
 
 export default function Transaction({
     auth,
@@ -13,6 +14,10 @@ export default function Transaction({
     transaction,
     env,
 }) {
+    const {data, setData, post, processing, errors} = useForm({
+        voucher: "",
+    });
+
     const onPay = () => {
         router.post(
             route("user.dashboard.subscriptions.pay", {
@@ -27,6 +32,14 @@ export default function Transaction({
             }
         );
     };
+
+    const onApplyVoucher = () => {
+        post(
+            route("user.dashboard.voucher.apply", {
+                transaction: transaction.id,
+            })
+        );
+    }
 
     const onSnapMidtrans = (transaction) => {
         snap.pay(transaction.snap_token, {
@@ -73,14 +86,19 @@ export default function Transaction({
                             variant="primary-outline"
                             placeholder="Enter Your Voucher Here"
                             className="col-span-4"
+                            onChange={(e) => setData("voucher", e.target.value)}
                         />
                         <Button
                             className="col-span-1"
                             variant="primary"
+                            onClick={onApplyVoucher}
                         >
                             Redeem
                         </Button>
                     </div>
+                    {errors.voucher && (
+                        <InputError message={errors.voucher}/>
+                    )}
                 </div>
 
                 <div className="flex flex-col gap-2">
