@@ -17,7 +17,9 @@ class VoucherController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Admin/Voucher/Index', [
+            'vouchers' => Voucher::with('subscriptionsPlan')->get()
+        ]);
     }
 
     /**
@@ -54,7 +56,7 @@ class VoucherController extends Controller
         $voucher->subscriptions_plans_id = $data['subscriptions_plans_id'];
         $voucher->save();
 
-        return redirect()->route('admin.dashboard.movie.index')->with([
+        return redirect()->route('admin.dashboard.voucher.index')->with([
             'type' => 'success',
             'message' => 'Voucher created successfully'
         ]);
