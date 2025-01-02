@@ -22,7 +22,7 @@ const UserMenu = [
         text: "Discover",
     },
     {
-        link: null,
+        link: "user.dashboard.bookmark.index",
         icon: (
             <svg
                 width="24"
@@ -30,6 +30,7 @@ const UserMenu = [
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 xmlns="http://www.w3.org/2000/svg"
+                className="active"
             >
                 <path
                     fillRule="evenodd"

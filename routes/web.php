@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\BookmarkController;
 use App\Http\Controllers\User\SubscriptionController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\MovieController;
@@ -47,6 +48,9 @@ Route::middleware('auth', 'role:user')->prefix('dashboard')->name('user.dashboar
     // Voucher
     Route::post('/voucher/redeem', [UserVoucherController::class, 'redeem'])->name('voucher.redeem');
     Route::post('/voucher/{transaction}/apply', [UserVoucherController::class, 'apply'])->name('voucher.apply');
+
+    // Bookmark
+    Route::get('/bookmark', [BookmarkController::class, 'index'])->name('bookmark.index');
 });
 
 Route::middleware('auth', 'role:admin')->prefix('admin')->name('admin.dashboard.')->group(function () {

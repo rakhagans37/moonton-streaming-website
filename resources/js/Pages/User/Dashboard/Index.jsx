@@ -47,11 +47,13 @@ export default function Dashboard({ auth, movies, featuredMovies }) {
                             {featuredMovies.map((featuredMovie) => (
                                 <FeaturedMovie
                                     key={featuredMovie.id}
+                                    movieId={featuredMovie.id}
                                     title={featuredMovie.title}
                                     slug={featuredMovie.slug}
                                     category={JSON.parse(featuredMovie.category)}
                                     thumbnail={featuredMovie.thumbnail}
                                     rating={featuredMovie.rating}
+                                    isBookmarked={false}
                                 />
                             ))}
                         </Flickity>
