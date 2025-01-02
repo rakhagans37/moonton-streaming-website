@@ -42,9 +42,7 @@ Route::middleware('auth', 'role:user')->prefix('dashboard')->name('user.dashboar
 
 Route::middleware('auth', 'role:admin')->prefix('admin')->name('admin.dashboard.')->group(function () {
     Route::put('/movie/{movieId}/restore', [AdminMovieController::class, 'restore'])->name('movie.restore');
-    Route::get('/', function () {
-        return Inertia::render('Admin/Voucher/Create');
-    })->name('voucher.create');
+    Route::resource('voucher', VoucherController::class);
     Route::resource('movie', AdminMovieController::class);
 });
 
