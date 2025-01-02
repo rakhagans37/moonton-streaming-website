@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'checkUserSubscription' => \App\Http\Middleware\UserSubscriptionMiddleware::class,
+        'checkUserTransaction' => \App\Http\Middleware\UserTransactionMiddleware::class,
     ];
 }

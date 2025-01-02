@@ -1,15 +1,37 @@
+import Alert from "@/Components/Alert";
 import Button from "@/Components/Button";
+import InputError from "@/Components/InputError";
 import TextInput from "@/Components/TextInput";
 import Heading from "@/Components/Typography/Heading";
 import Subheading from "@/Components/Typography/Subheading";
 import Authenticated from "@/Layouts/Authenticated/Index";
-import { Head } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 
-export default function SubscriptionRedeem({ auth }) {
+export default function SubscriptionRedeem({ auth, flashMessage }) {
+    const { data, setData, errors, processing, post } = useForm({
+        voucher: "",
+    });
+
+    const onRedeem = () => {
+        post(
+            route("user.dashboard.voucher.redeem", {
+                voucher: data.voucher,
+            }),
+        );
+    };
+
     return (
         <Authenticated auth={auth}>
             <Head title="Redeem" />
 
+            {flashMessage?.message && (
+                <Alert
+                    title={flashMessage.type}
+                    message={flashMessage.message}
+                    type={flashMessage.type == "failed" ? "danger" : "success"}
+                />
+            )}
+            
             <div className="mb-8">
                 <Heading
                     title="Redeem Subscription"
@@ -32,15 +54,18 @@ export default function SubscriptionRedeem({ auth }) {
                     variant="primary-outline"
                     placeholder="Enter Your Voucher Here"
                     className="col-span-4"
+                    onChange={(e) => setData("voucher", e.target.value)}
                 />
                 <Button
                     className="col-span-1"
-                    onClick="#"
+                    onClick={onRedeem}
                     variant="primary"
                 >
                     Redeem
                 </Button>
             </div>
+
+            <InputError message={errors.voucher} className="col-span-4" />
         </Authenticated>
     );
 }

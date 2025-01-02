@@ -15,15 +15,20 @@ return new class extends Migration
         Schema::create('vouchers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subscriptions_plans_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('name');
             $table->string('code')->unique();
             $table->enum('type', ['percent', 'redeem', 'amount']);
-            $table->integer('value');
+            $table->integer('value')->nullable();
             $table->integer('limit')->nullable();
             $table->integer('used')->default(0);
+            $table->dateTime('expired_at');
             $table->timestamps();
         });
 
-        DB::statement('ALTER TABLE vouchers ADD CONSTRAINT check_redeem_subscriptions_plans_id CHECK (type != "redeem" OR subscriptions_plans_id IS NOT NULL)');
+        DB::statement('ALTER TABLE vouchers ADD CONSTRAINT check_voucher_requirements CHECK (
+            (type = "redeem" AND subscriptions_plans_id IS NOT NULL) OR 
+            ((type = "percent" OR type = "amount") AND value IS NOT NULL)
+        )');
     }
 
     /**

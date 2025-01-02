@@ -7,6 +7,7 @@ use App\Http\Controllers\User\SubscriptionController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\MovieController;
 use App\Http\Controllers\User\TransactionController;
+use App\Http\Controllers\User\VoucherController as UserVoucherController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,18 +34,24 @@ Route::middleware('auth', 'role:user')->prefix('dashboard')->name('user.dashboar
     // Subscription
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->middleware('checkUserSubscription:false')->name('subscriptions.index');
     Route::get('/subscriptions/redeem', [SubscriptionController::class, 'redeem'])->middleware('checkUserSubscription:false')->name('subscriptions.redeem');
-    Route::post('/subcscriptions/{subscriptionPlan}/user-subscribe/', [SubscriptionController::class, 'subscribe'])->name('subscriptions.userSubscribe');
-   
+    Route::post('/subscriptions/{subscriptionPlan}/user-subscribe/', [SubscriptionController::class, 'subscribe'])->middleware('checkUserSubscription:false')->name('subscriptions.userSubscribe');
+
     // Transaction
+    Route::get('/subscriptions/{transaction}/transaction/', [TransactionController::class, 'payPage'])
+        ->middleware('checkUserTransaction', 'checkUserSubscription:false')
+        ->name('subscriptions.payPage');
+    Route::post('/transaction/{transaction}/cancel', [TransactionController::class, 'cancel'])->middleware('checkUserTransaction')->name('transaction.cancel');
     Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction.index');
-    Route::post('/subscriptions/{transaction}/transaction/', [TransactionController::class, 'pay'])->middleware('checkUserSubscription:false')->name('subscriptions.pay');
+    Route::post('/subscriptions/{transaction}/pay/', [TransactionController::class, 'pay'])->middleware('checkUserSubscription:false')->name('subscriptions.pay');
+
+    // Voucher
+    Route::post('/voucher/redeem', [UserVoucherController::class, 'redeem'])->name('voucher.redeem');
+    Route::post('/voucher/{transaction}/apply', [UserVoucherController::class, 'apply'])->name('voucher.apply');
 });
 
 Route::middleware('auth', 'role:admin')->prefix('admin')->name('admin.dashboard.')->group(function () {
     Route::put('/movie/{movieId}/restore', [AdminMovieController::class, 'restore'])->name('movie.restore');
-    Route::get('/', function () {
-        return Inertia::render('Admin/Voucher/Create');
-    })->name('voucher.create');
+    Route::resource('voucher', VoucherController::class);
     Route::resource('movie', AdminMovieController::class);
 });
 

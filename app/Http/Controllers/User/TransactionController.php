@@ -5,9 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\SubscriptionsPlan;
 use App\Models\Transaction;
-use App\Models\UserSubscriptions;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -35,25 +33,11 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function subscribe(Request $request, SubscriptionsPlan $subscriptionPlan)
+    public function payPage(Transaction $transaction)
     {
-        $userSubscription = new UserSubscriptions();
-        $userSubscription->user_id = $request->user()->id;
-        $userSubscription->subscriptions_plans_id = $subscriptionPlan->id;
-        $userSubscription->save();
-
-        $transaction = new Transaction();
-        $transaction->user_subscriptions_id = $userSubscription->id;
-        $transaction->price = $subscriptionPlan->price;
-        $transaction->final_price = $subscriptionPlan->price;
-        $transaction->discount = 0;
-        // $transaction->expires_at = Carbon::now()->addMonth($subscriptionPlan->active_period_in_months);
-        $transaction->payment_status = 'pending';
-        $transaction->save();
-
         return Inertia::render('User/Dashboard/Subscription/Transaction', [
             'transaction' => $transaction,
-            'subscriptionPlan' => SubscriptionsPlan::find($userSubscription->subscriptions_plans_id)
+            'subscriptionPlan' => SubscriptionsPlan::find($transaction->userSubscription->subscriptions_plans_id)
         ]);
     }
 
@@ -67,6 +51,7 @@ class TransactionController extends Controller
             )
         );
         $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $transaction->midtrans_order_id = $params['transaction_details']['order_id'];
         $transaction->snap_token = $snapToken;
         $transaction->save();
 
@@ -74,6 +59,15 @@ class TransactionController extends Controller
         return Inertia::render('User/Dashboard/Subscription/Transaction', [
             'transaction' => $transaction,
             'userSubscription' => $transaction->userSubscription
+        ]);
+    }
+
+    public function cancel(Transaction $transaction)
+    {
+        \Midtrans\Transaction::cancel($transaction->midtrans_order_id);
+        return redirect()->route('user.dashboard.transaction.index')->with([
+            'message' => 'Transaction canceled',
+            'type' => 'Info'
         ]);
     }
 
@@ -94,8 +88,6 @@ class TransactionController extends Controller
             // TODO Set payment status in merchant's database to 'success'
             $transaction->payment_status = 'success';
             $userSubscription->expires_at = Carbon::now()->addMonth($userSubscription->subscriptionPlan->active_period_in_months);
-            $userSubscription->save();
-            $transaction->save();
         } else if (
             $transactionStatus == 'settlement' && $fraud == 'challenge'
         ) {
@@ -112,6 +104,10 @@ class TransactionController extends Controller
             $transaction->payment_status = 'failure';
         }
 
+        $userSubscription->save();
+        $transaction->save();
+
+        return "OK";
         return response()->json(['status' => 'success', 'message' => 'Payment status updated']);
     }
 }
