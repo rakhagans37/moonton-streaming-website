@@ -37,7 +37,9 @@ Route::middleware('auth', 'role:user')->prefix('dashboard')->name('user.dashboar
     Route::post('/subscriptions/{subscriptionPlan}/user-subscribe/', [SubscriptionController::class, 'subscribe'])->middleware('checkUserSubscription:false')->name('subscriptions.userSubscribe');
 
     // Transaction
-    Route::get('/subscriptions/{transaction}/transaction/', [TransactionController::class, 'payPage'])->middleware('checkUserSubscription:false')->name('subscriptions.payPage');
+    Route::get('/subscriptions/{transaction}/transaction/', [TransactionController::class, 'payPage'])
+        ->middleware('auth', 'checkUserTransaction', 'checkUserSubscription:false')
+        ->name('subscriptions.payPage');
     Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction.index');
     Route::post('/subscriptions/{transaction}/pay/', [TransactionController::class, 'pay'])->middleware('checkUserSubscription:false')->name('subscriptions.pay');
 
