@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -74,5 +75,11 @@ class User extends Authenticatable
     public function transactions() : HasManyThrough
     {
         return $this->hasManyThrough(Transaction::class, UserSubscriptions::class);
+    }
+
+    // Get user bookmark
+    public function bookmarks() : HasMany
+    {
+        return $this->hasMany(Bookmark::class, 'user_id', 'id');
     }
 }
