@@ -19,6 +19,6 @@ class Bookmark extends Model
 
     public function movie() : BelongsTo
     {
-        return $this->belongsTo(Movies::class);
+        return $this->belongsTo(Movies::class, 'movies_id', 'id');
     }
 }

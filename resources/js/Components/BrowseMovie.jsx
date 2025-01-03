@@ -60,6 +60,8 @@ BrowseMovie.propTypes = {
     title: PropTypes.string.isRequired,
     category: PropTypes.array.isRequired,
     thumbnail: PropTypes.string.isRequired,
+    isBookmarked: PropTypes.bool.isRequired,
+    onClickBookmark: PropTypes.func.isRequired,
 };
 
 export default BrowseMovie;

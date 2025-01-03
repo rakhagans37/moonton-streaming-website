@@ -13,9 +13,11 @@ class BookmarkController extends Controller
 {
     public function index()
     {
-        $bookmark = User::find(Auth::user()->id)->bookmarks->load('movie');
+        $bookmarks = Movies::whereHas('bookmarks', function ($query) {
+            $query->where('user_id', Auth::user()->id);
+        })->get();
         return Inertia::render('User/Dashboard/Bookmark', [
-            'bookmarks' => $bookmark
+            'bookmarks' => count($bookmarks) > 0 ? $bookmarks : null
         ]);
     }
 
@@ -37,6 +39,6 @@ class BookmarkController extends Controller
         $bookmark = Bookmark::where('user_id', $user->id)->where('movies_id', $movie->id)->first();
         $bookmark->delete();
 
-        return redirect()->route('user.dashboard.index');
+        return redirect()->back();
     }
 }

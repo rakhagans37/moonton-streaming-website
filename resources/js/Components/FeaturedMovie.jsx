@@ -79,6 +79,8 @@ FeaturedMovie.propTypes = {
     category: PropTypes.array.isRequired,
     thumbnail: PropTypes.string.isRequired,
     rating: PropTypes.number,
+    isBookmarked: PropTypes.bool,
+    onClickBookmark: PropTypes.func,
 };
 
 export default FeaturedMovie;
