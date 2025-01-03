@@ -2,8 +2,7 @@ import PropTypes from "prop-types";
 import { Link } from "@inertiajs/react";
 import { useState } from "react";
 
-const BrowseMovie = function BrowseMovie({ slug, title, category, thumbnail, isBookmarked = false }) {
-    const [isBookmark, setIsBookmark] = useState(isBookmarked);
+const BrowseMovie = function BrowseMovie({ slug, title, category, thumbnail, isBookmarked, onClickBookmark }) {
     return (
         <div className="absolute group overflow-hidden mr-[30px]">
             <img
@@ -34,7 +33,7 @@ const BrowseMovie = function BrowseMovie({ slug, title, category, thumbnail, isB
             <button className="insert-0 absolute z-50 top-3 right-12 m-[10px]"
                 onClick={(e) => {
                     e.preventDefault();
-                    setIsBookmark(!isBookmark);
+                    onClickBookmark();
                 }}
             >
                 <svg
@@ -43,7 +42,7 @@ const BrowseMovie = function BrowseMovie({ slug, title, category, thumbnail, isB
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     xmlns="http://www.w3.org/2000/svg"
-                    className={`insert-0 absolute z-50 fill-white ${isBookmark ? "fill-red-600" : "fill-white"}`}
+                    className={`insert-0 absolute z-50 ${isBookmarked? "fill-red-600" : "fill-white"}`}
                 >
                     <path
                         fillRule="evenodd"

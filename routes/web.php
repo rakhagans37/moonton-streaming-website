@@ -51,6 +51,8 @@ Route::middleware('auth', 'role:user')->prefix('dashboard')->name('user.dashboar
 
     // Bookmark
     Route::get('/bookmark', [BookmarkController::class, 'index'])->name('bookmark.index');
+    Route::post('/bookmark/{movie}', [BookmarkController::class, 'store'])->name('bookmark.store');
+    Route::delete('/bookmark/{movie}', [BookmarkController::class, 'destroy'])->name('bookmark.destroy');
 });
 
 Route::middleware('auth', 'role:admin')->prefix('admin')->name('admin.dashboard.')->group(function () {

@@ -2,7 +2,7 @@ import Alert from "@/Components/Alert";
 import BrowseMovie from "@/Components/BrowseMovie";
 import FeaturedMovie from "@/Components/FeaturedMovie";
 import Authenticated from "@/Layouts/Authenticated/Index";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import Flickity from "react-flickity-component";
 
 export default function Dashboard({ auth, movies, featuredMovies }) {
@@ -19,6 +19,16 @@ export default function Dashboard({ auth, movies, featuredMovies }) {
     const { props } = usePage();
     const { flash } = props;
 
+    console.log(movies);
+
+    const onClickBookmark = (movies_id, pre) => {
+        if (pre === false) {
+            router.post(route("user.dashboard.bookmark.store", movies_id));
+        } else {
+            router.delete(route("user.dashboard.bookmark.destroy", movies_id));
+        }
+    };
+
     return (
         <>
             <Head title="Dashboard">
@@ -29,10 +39,7 @@ export default function Dashboard({ auth, movies, featuredMovies }) {
             </Head>
             <Authenticated auth={auth}>
                 {/* Alert */}
-                {flash.error && (
-                    <Alert title={"Info"} message={flash.error} />
-                )}
-                
+                {flash.error && <Alert title={"Info"} message={flash.error} />}
 
                 {/* Featured Movie */}
                 <div>
@@ -50,10 +57,24 @@ export default function Dashboard({ auth, movies, featuredMovies }) {
                                     movieId={featuredMovie.id}
                                     title={featuredMovie.title}
                                     slug={featuredMovie.slug}
-                                    category={JSON.parse(featuredMovie.category)}
+                                    category={JSON.parse(
+                                        featuredMovie.category
+                                    )}
                                     thumbnail={featuredMovie.thumbnail}
                                     rating={featuredMovie.rating}
-                                    isBookmarked={false}
+                                    isBookmarked={
+                                        featuredMovie.bookmarks.length > 0
+                                            ? true
+                                            : false
+                                    }
+                                    onClickBookmark={() =>
+                                        onClickBookmark(
+                                            featuredMovie.id,
+                                            featuredMovie.bookmarks.length > 0
+                                                ? true
+                                                : false
+                                        )
+                                    }
                                 />
                             ))}
                         </Flickity>
@@ -74,6 +95,19 @@ export default function Dashboard({ auth, movies, featuredMovies }) {
                                     slug={movie.slug}
                                     category={JSON.parse(movie.category)}
                                     thumbnail={movie.thumbnail}
+                                    isBookmarked={
+                                        movie.bookmarks.length > 0
+                                            ? true
+                                            : false
+                                    }
+                                    onClickBookmark={() =>
+                                        onClickBookmark(
+                                            movie.id,
+                                            movie.bookmarks.length > 0
+                                                ? true
+                                                : false
+                                        )
+                                    }
                                 />
                             ))}
                         </Flickity>

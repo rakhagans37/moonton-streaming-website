@@ -3,15 +3,14 @@ import { Link } from "@inertiajs/react";
 import { useState } from "react";
 
 const FeaturedMovie = function FeaturedMovie({
-    movieId,
     slug,
     title,
     category,
     thumbnail,
     rating = 0,
-    isBookmarked = false,
+    isBookmarked,
+    onClickBookmark = () => { },
 }) {
-    const [isBookmark, setIsBookmark] = useState(isBookmarked);
     return (
         <div className="absolute overflow-hidden group mr-[30px] w-max">
             <img
@@ -52,7 +51,7 @@ const FeaturedMovie = function FeaturedMovie({
             <button className="insert-0 absolute z-50 top-4 right-16 m-[10px]"
                 onClick={(e) => {
                     e.preventDefault();
-                    setIsBookmark(!isBookmark);
+                    onClickBookmark();
                 }}
             >
                 <svg
@@ -61,7 +60,7 @@ const FeaturedMovie = function FeaturedMovie({
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     xmlns="http://www.w3.org/2000/svg"
-                    className={`insert-0 absolute z-50 fill-white ${isBookmark ? "fill-red-600" : "fill-white"}`}
+                    className={`insert-0 absolute z-50 ${isBookmarked? "fill-red-600" : "fill-white"}`}
                 >
                     <path
                         fillRule="evenodd"
