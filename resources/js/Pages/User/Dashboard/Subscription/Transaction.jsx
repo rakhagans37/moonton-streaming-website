@@ -20,7 +20,7 @@ export default function Transaction({
 
     const onPay = () => {
         router.post(
-            route("user.dashboard.subscriptions.pay", {
+            route("user.dashboard.transaction.pay", {
                 transaction: transaction.id,
             }),
             {},

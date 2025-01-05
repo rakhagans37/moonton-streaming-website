@@ -42,7 +42,7 @@ class SubscriptionController extends Controller
         $transaction->payment_status = 'pending';
         $transaction->save();
 
-        return redirect()->route('user.dashboard.subscriptions.payPage', $transaction);
+        return redirect()->route('user.dashboard.transaction.detail', $transaction);
     }
 
     

@@ -63,7 +63,7 @@ export default function Transaction({ auth, transactions, flashMessage }) {
                                         <>
                                             <Link
                                                 href={route(
-                                                    "user.dashboard.subscriptions.payPage",
+                                                    "user.dashboard.transaction.detail",
                                                     transaction.id
                                                 )}
                                                 className="w-full"

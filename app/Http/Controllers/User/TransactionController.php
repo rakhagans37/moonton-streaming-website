@@ -5,26 +5,20 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\SubscriptionsPlan;
 use App\Models\Transaction;
-use Carbon\Carbon;
+use App\Services\Interface\PaymentGatewayInterface;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
 class TransactionController extends Controller
 {
+    protected $paymentGateway;
 
-    public function __construct()
+    public function __construct(PaymentGatewayInterface $paymentGateway)
     {
-        // Set your Merchant Server Key
-        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION');
-        // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = env('MIDTRANS_IS_SANITIZED');
-        // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = env('MIDTRANS_IS_3DS');
+        $this->paymentGateway  = $paymentGateway;
     }
-
+    
     public function index()
     {
         $transcations = Auth::user()->transactions;
@@ -33,7 +27,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function payPage(Transaction $transaction)
+    public function detail(Transaction $transaction)
     {
         return Inertia::render('User/Dashboard/Subscription/Transaction', [
             'transaction' => $transaction,
@@ -44,14 +38,11 @@ class TransactionController extends Controller
     public function pay(Transaction $transaction)
     {
         $transaction = Transaction::find($transaction->id);
-        $params = array(
-            'transaction_details' => array(
-                'order_id' => $transaction->id . "-" . Str::random(5),
-                'gross_amount' => $transaction->final_price,
-            )
-        );
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
-        $transaction->midtrans_order_id = $params['transaction_details']['order_id'];
+        $order_id = $transaction->id . "-" . Str::random(5);
+        $gross_amount = $transaction->final_price;
+
+        $snapToken = $this->paymentGateway->createSnapToken($order_id, $gross_amount);
+        $transaction->midtrans_order_id = $order_id;
         $transaction->snap_token = $snapToken;
         $transaction->save();
 
@@ -60,54 +51,5 @@ class TransactionController extends Controller
             'transaction' => $transaction,
             'userSubscription' => $transaction->userSubscription
         ]);
-    }
-
-    public function cancel(Transaction $transaction)
-    {
-        \Midtrans\Transaction::cancel($transaction->midtrans_order_id);
-        return redirect()->route('user.dashboard.transaction.index')->with([
-            'message' => 'Transaction canceled',
-            'type' => 'Info'
-        ]);
-    }
-
-    public function midtransCallback()
-    {
-        $notif = new \Midtrans\Notification();
-
-        $transactionStatus = $notif->transaction_status;
-        $fraud = $notif->fraud_status;
-
-        $transactionId = explode('-', $notif->order_id)[0];
-        $transaction = Transaction::find($transactionId);
-        $userSubscription = $transaction->userSubscription;
-
-        // error_log("Order ID $notif->order_id: " . "transaction status = $transaction, fraud staus = $fraud");
-
-        if ($transactionStatus == 'settlement' && $fraud == 'accept') {
-            // TODO Set payment status in merchant's database to 'success'
-            $transaction->payment_status = 'success';
-            $userSubscription->expires_at = Carbon::now()->addMonth($userSubscription->subscriptionPlan->active_period_in_months);
-        } else if (
-            $transactionStatus == 'settlement' && $fraud == 'challenge'
-        ) {
-            // TODO Set payment status in merchant's database to 'challenge'
-            $transaction->payment_status = 'challenge';
-        } else if ($transactionStatus == 'settlement' && $fraud == 'deny') {
-            // TODO Set payment status in merchant's database to 'failure'
-            $transaction->payment_status = 'failure';
-        } else if ($transactionStatus == "pending" && $fraud == "accept") {
-            // TODO Set payment status in merchant's database to 'pending'
-            $transaction->payment_status = 'pending';
-        } else {
-            // TODO Set payment status in merchant's database to 'failure'
-            $transaction->payment_status = 'failure';
-        }
-
-        $userSubscription->save();
-        $transaction->save();
-
-        return "OK";
-        return response()->json(['status' => 'success', 'message' => 'Payment status updated']);
     }
 }

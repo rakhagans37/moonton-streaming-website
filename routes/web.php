@@ -6,12 +6,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\BookmarkController;
 use App\Http\Controllers\User\SubscriptionController;
 use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\MidtransController;
 use App\Http\Controllers\User\MovieController;
 use App\Http\Controllers\User\TransactionController;
 use App\Http\Controllers\User\VoucherController as UserVoucherController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +23,7 @@ use Inertia\Inertia;
 |
 */
 // Midtrans Route
-Route::post('/midtrans/notification', [TransactionController::class, 'midtransCallback'])->name('midtrans.notification');
+Route::post('/midtrans/notification', [MidtransController::class, 'midtransCallback'])->name('midtrans.notification');
 
 Route::redirect('/', '/login');
 
@@ -35,15 +34,15 @@ Route::middleware('auth', 'role:user')->prefix('dashboard')->name('user.dashboar
     // Subscription
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->middleware('checkUserSubscription:false')->name('subscriptions.index');
     Route::get('/subscriptions/redeem', [SubscriptionController::class, 'redeem'])->middleware('checkUserSubscription:false')->name('subscriptions.redeem');
-    Route::post('/subscriptions/{subscriptionPlan}/user-subscribe/', [SubscriptionController::class, 'subscribe'])->middleware('checkUserSubscription:false')->name('subscriptions.userSubscribe');
+    Route::post('/subscriptions/{subscriptionPlan}/subscribe/', [SubscriptionController::class, 'subscribe'])->middleware('checkUserSubscription:false')->name('subscriptions.userSubscribe');
 
     // Transaction
-    Route::get('/subscriptions/{transaction}/transaction/', [TransactionController::class, 'payPage'])
+    Route::get('/transaction/{transaction}/detail/', [TransactionController::class, 'detail'])
         ->middleware('checkUserTransaction', 'checkUserSubscription:false')
-        ->name('subscriptions.payPage');
-    Route::post('/transaction/{transaction}/cancel', [TransactionController::class, 'cancel'])->middleware('checkUserTransaction')->name('transaction.cancel');
+        ->name('transaction.detail');
+    Route::post('/transaction/{transaction}/cancel', [MidtransController::class, 'cancel'])->middleware('checkUserTransaction')->name('transaction.cancel');
     Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction.index');
-    Route::post('/subscriptions/{transaction}/pay/', [TransactionController::class, 'pay'])->middleware('checkUserSubscription:false')->name('subscriptions.pay');
+    Route::post('/transaction/{transaction}/pay/', [TransactionController::class, 'pay'])->middleware('checkUserSubscription:false')->name('transaction.pay');
 
     // Voucher
     Route::post('/voucher/redeem', [UserVoucherController::class, 'redeem'])->name('voucher.redeem');

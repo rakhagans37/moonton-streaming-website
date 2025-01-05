@@ -12,7 +12,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Payment Gateway
+        $this->app->bind(
+            \App\Services\Interface\PaymentGatewayInterface::class,
+            \App\Services\MidtransService::class
+        );
     }
 
     /**
