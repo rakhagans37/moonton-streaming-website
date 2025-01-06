@@ -7,34 +7,18 @@ use App\Http\Requests\User\Voucher\RedeemRequest;
 use App\Models\Transaction;
 use App\Models\UserSubscriptions;
 use App\Models\Voucher;
+use App\Services\Voucher\RedeemVoucher;
+use App\Services\VoucherService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class VoucherController extends Controller
 {
+    protected $voucherService;
 
-    private function validateVoucher($voucher)
+    public function __construct(VoucherService $voucherService)
     {
-
-        if (!$voucher) {
-            return [
-                'type' => 'failed',
-                'message' => 'Voucher not found'
-            ];
-        } else if ($voucher->limit <= $voucher->used) {
-            return [
-                'type' => 'failed',
-                'message' => 'Voucher limit has been reached'
-            ];
-        } else if (Carbon::now()->greaterThan($voucher->expired_at)) {
-            return [
-                'type' => 'failed',
-                'message' => 'Voucher has been expired'
-            ];
-        }
-
-        return null;
+        $this->voucherService = $voucherService;
     }
 
     public function redeem(RedeemRequest $request)
@@ -42,26 +26,22 @@ class VoucherController extends Controller
         $data = $request->validated();
 
         $voucher = Voucher::where('code', $data['voucher'])->first();
+        $voucher = $this->voucherService->createInstance($voucher);
 
-        $validationError = $this->validateVoucher($voucher);
+        $validationError = $voucher->validateVoucher($voucher);
         if ($validationError) {
             return redirect()->back()->with($validationError);
-        }
-
-        if ($voucher->type !== 'redeem') {
+        } else if (!$voucher instanceof RedeemVoucher) {
             return redirect()->back()->with([
                 'type' => 'failed',
                 'message' => 'Voucher is not redeemable'
             ]);
         }
 
-        $voucher->used += 1;
-        $voucher->save();
-
         $userSubscription = UserSubscriptions::create([
             'user_id' => Auth::id(),
-            'subscriptions_plans_id' => $voucher->subscriptions_plans_id,
-            'expires_at' => Carbon::now()->addMonths($voucher->subscriptionsPlan->active_period_in_months)
+            'subscriptions_plans_id' => $voucher->applyVoucher(null),
+            'expires_at' => Carbon::now()->addMonths($voucher->voucher->subscriptionsPlan->active_period_in_months)
         ]);
 
         Transaction::create([
@@ -70,7 +50,7 @@ class VoucherController extends Controller
             'price' => $userSubscription->subscriptionPlan->price,
             'discount' => $userSubscription->subscriptionPlan->price,
             'final_price' => 0,
-            'voucher_id' => $voucher->id
+            'voucher_id' => $voucher->voucher->id
         ]);
 
         return redirect()->route('user.dashboard.index')->with([
@@ -84,32 +64,23 @@ class VoucherController extends Controller
         $data = $request->validated();
 
         $voucher = Voucher::where('code', $data['voucher'])->first();
+        $voucher = $this->voucherService->createInstance($voucher);
 
-        $validationError = $this->validateVoucher($voucher);
+        $validationError = $voucher->validateVoucher();
         if ($validationError) {
             return redirect()->back()->with($validationError);
-        }
-
-        if ($voucher->type !== 'amount' && $voucher->type !== 'percent') {
+        } else if ($voucher instanceof RedeemVoucher) {
             return redirect()->back()->with([
                 'type' => 'failed',
-                'message' => 'Voucher is not applicable'
+                'message' => 'Voucher is not applicable for this transaction'
             ]);
         }
 
-        $voucher->used += 1;
-        $voucher->save();
-
-        $discount = 0;
-        if ($voucher->type == 'amount') {
-            $discount = $voucher->value;
-        } else if ($voucher->type == 'percent') {
-            $discount = $transaction->price * $voucher->value / 100;
-        }
+        $discount = $voucher->applyVoucher($transaction);
 
         $transaction->discount = $discount;
         $transaction->final_price = $transaction->price - $discount;
-        $transaction->voucher_id = $voucher->id;
+        $transaction->voucher_id = $voucher->voucher->id;
         $transaction->save();
 
 

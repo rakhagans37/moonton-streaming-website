@@ -21,11 +21,11 @@ class BookmarkController extends Controller
 
     public function index()
     {
-            $bookmarks = $this->movieService->getMovieWithBookmark();
+        $bookmarks = $this->movieService->getMovieWithBookmark();
 
-            return Inertia::render('User/Dashboard/Bookmark', [
-                'bookmarks' => $bookmarks
-            ]);
+        return Inertia::render('User/Dashboard/Bookmark', [
+            'bookmarks' => $bookmarks
+        ]);
     }
 
     public function store(Movies $movie)
