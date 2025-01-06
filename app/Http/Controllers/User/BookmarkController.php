@@ -3,42 +3,40 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Bookmark;
 use App\Models\Movies;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Services\Interface\BookmarkInterface;
+use App\Services\Interface\MovieInterface;
 use Inertia\Inertia;
 
 class BookmarkController extends Controller
 {
+    protected $bookmarkService;
+    protected $movieService;
+
+    public function __construct(BookmarkInterface $bookmarkService, MovieInterface $movieService)
+    {
+        $this->bookmarkService = $bookmarkService;
+        $this->movieService = $movieService;
+    }
+
     public function index()
     {
-        $bookmarks = Movies::whereHas('bookmarks', function ($query) {
-            $query->where('user_id', Auth::user()->id);
-        })->get();
-        return Inertia::render('User/Dashboard/Bookmark', [
-            'bookmarks' => count($bookmarks) > 0 ? $bookmarks : null
-        ]);
+            $bookmarks = $this->movieService->getMovieWithBookmark();
+
+            return Inertia::render('User/Dashboard/Bookmark', [
+                'bookmarks' => $bookmarks
+            ]);
     }
 
     public function store(Movies $movie)
     {
-
-        $user = User::find(Auth::user()->id);
-        $bookmark = new Bookmark();
-        $bookmark->user_id = $user->id;
-        $bookmark->movies_id = $movie->id;
-        $bookmark->save();
-
+        $this->bookmarkService->createBookmark($movie);
         return redirect()->back();
     }
 
     public function destroy(Movies $movie)
     {
-        $user = User::find(Auth::user()->id);
-        $bookmark = Bookmark::where('user_id', $user->id)->where('movies_id', $movie->id)->first();
-        $bookmark->delete();
-
+        $this->bookmarkService->deleteBookmark($movie);
         return redirect()->back();
     }
 }

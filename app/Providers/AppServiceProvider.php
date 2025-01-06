@@ -17,6 +17,18 @@ class AppServiceProvider extends ServiceProvider
             \App\Services\Interface\PaymentGatewayInterface::class,
             \App\Services\MidtransService::class
         );
+
+        // Bookmark
+        $this->app->bind(
+            \App\Services\Interface\BookmarkInterface::class,
+            \App\Services\BookmarkService::class
+        );
+
+        // Movie
+        $this->app->bind(
+            \App\Services\Interface\MovieInterface::class,
+            \App\Services\MovieService::class
+        );
     }
 
     /**

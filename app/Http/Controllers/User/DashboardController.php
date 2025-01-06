@@ -3,23 +3,22 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Movies;
-use Illuminate\Http\Request;
+use App\Services\Interface\MovieInterface;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
+
 
 class DashboardController extends Controller
 {
+    protected $movieService;
+
+    public function __construct(MovieInterface $movieService)
+    {
+        $this->movieService = $movieService;
+    }
+
     function index() {
-        $userId = Auth::id();
-
-        $featuredMovie = Movies::with(['bookmarks' => function($query) use ($userId) {
-            $query->where('user_id', $userId);
-        }])->where('is_featured', 1)->get();
-
-        $movies = Movies::with(['bookmarks' => function($query) use ($userId) {
-            $query->where('user_id', $userId);
-        }])->get();
+        $featuredMovie = $this->movieService->getAllFeaturedMovieWithUserBookmark();
+        $movies = $this->movieService->getAllMovieWithUserBookmark();
 
         return Inertia::render('User/Dashboard/Index', [
             'featuredMovies' => $featuredMovie,

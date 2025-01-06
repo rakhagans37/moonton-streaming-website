@@ -4,8 +4,7 @@ namespace App\Services;
 use App\Services\Interface\PaymentGatewayInterface;
 use Midtrans\Config;
 use Midtrans\Snap;
-use Midtrans\Transaction as MidtransTransaction;
-use Midtrans\Notification;
+
 
 class MidtransService implements PaymentGatewayInterface
 {
